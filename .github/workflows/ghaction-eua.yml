@@ -30,7 +30,7 @@ jobs:
         apiKey=$WS_APIKEY
         userKey=$WS_USERKEY
         productName=GH_${{ github.event.repository.name }}
-        projectName=${{ github.ref }}_Prioritize
+        projectName=${{ github.ref }}_Prioritize-noincludes
         enableImpactAnalysis=true
         requireKnownSha1=false
         resolveAllDependencies=false
@@ -38,7 +38,6 @@ jobs:
         maven.aggregateModules=true
         fileSystemScan=false
         generateProjectDetailsJson=true
-        includes=**/*.jar
         EOF
         cat eua.config
         echo config created successfully
