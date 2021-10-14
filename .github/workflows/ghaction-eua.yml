@@ -30,7 +30,7 @@ jobs:
         apiKey=$WS_APIKEY
         userKey=$WS_USERKEY
         productName=GH_${{ github.event.repository.name }}
-        projectName=${{ github.ref }}_Prioritize-noincludes
+        projectName=${{ github.ref }}_Prioritize-latestxmodule
         enableImpactAnalysis=true
         requireKnownSha1=false
         resolveAllDependencies=false
@@ -42,10 +42,9 @@ jobs:
         cat eua.config
         echo config created successfully
         curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
-        curl -o xModuleAnalyzer.jar https://unified-agent.s3.amazonaws.com/xModuleAnalyzer/xModuleAnalyzer-21.6.3.jar
+        curl -LJO https://unified-agent.s3.amazonaws.com/xModuleAnalyzer/xModuleAnalyzer.jar
         echo Unified Agent downloaded successfully
         java -jar wss-unified-agent.jar -d ./ -analyzeMultiModule multimodule.txt
-        sed -i 's%AppPath4=%AppPath4=\/webgoat-server\/target\/webgoat-server-v8.1.0.jar%1' multimodule.txt
         echo 'multimodule.txt contents'
         cat multimodule.txt
         java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -c ./eua.config -aggregateModules true
