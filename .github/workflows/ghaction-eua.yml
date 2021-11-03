@@ -49,5 +49,5 @@ jobs:
         java -jar wss-unified-agent.jar -d ./ -analyzeMultiModuleExclusions '**/*docs*' -analyzeMultiModule multimodule.txt
         echo 'multimodule.txt contents'
         cat multimodule.txt
-        java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -aggregateModules true
+        java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -c ./eua.config -aggregateModules true
         
