@@ -63,7 +63,7 @@ jobs:
         maven.resolveDependencies=true
         maven.aggregateModules=true
         npm.resolveDependencies=true
-        npm_resolveLockFile=false
+        npm.resolveLockFile=false
         fileSystemScan=false
         generateProjectDetailsJson=true
         EOF
