@@ -43,7 +43,7 @@ jobs:
           ${{ runner.os }}-node-
 
     - name: Install dependencies
-      run: cd ./docs && npm install && cd ..
+      run: cd ./docs && npm install --only=prod && cd ..
 
     - name: WhiteSource Unified Agent Scan
       env:
