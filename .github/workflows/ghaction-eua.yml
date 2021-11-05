@@ -1,4 +1,4 @@
-name: Whitesource Prioritize Java with Maven
+name: Whitesource Prioritize Java(Maven) and JavaScript(NPM)
 
 on:
   push:
@@ -18,8 +18,33 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
     - name: Build with Maven
       run: mvn clean install -DskipTests=true
+
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      run: npm install
+
     - name: WhiteSource Unified Agent Scan
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -37,17 +62,17 @@ jobs:
         resolveAllDependencies=false
         maven.resolveDependencies=true
         maven.aggregateModules=true
+        npm.resolveDependencies=true
+        npm_resolveLockFile=false
         fileSystemScan=false
         generateProjectDetailsJson=true
         EOF
         cat eua.config
         echo config created successfully
-        echo config created successfully
         curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
         curl -LJO https://unified-agent.s3.amazonaws.com/xModuleAnalyzer/xModuleAnalyzer.jar
         echo Unified Agent downloaded successfully
-        java -jar wss-unified-agent.jar -d ./ -analyzeMultiModuleExclusions '**/*docs*' -analyzeMultiModule multimodule.txt
+        java -jar wss-unified-agent.jar -d ./ -analyzeMultiModuleExclusions '**/*internal* **/*original' -analyzeMultiModule multimodule.txt
         echo 'multimodule.txt contents'
         cat multimodule.txt
         java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -c ./eua.config -aggregateModules true
-        
