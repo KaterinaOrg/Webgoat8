@@ -76,3 +76,13 @@ jobs:
         echo 'multimodule.txt contents'
         cat multimodule.txt
         java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -c ./eua.config -aggregateModules true
+
+    - name: 'Upload Prioritize Logs'
+      uses: actions/upload-artifact@v2
+      with:
+        name: Prioritize-Logs
+        path: |
+          ${{github.workspace}}/whitesource
+          /tmp/whitesource*
+          /tmp/ws-ua*
+        retention-days: 1
