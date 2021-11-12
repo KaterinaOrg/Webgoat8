@@ -51,31 +51,48 @@ jobs:
         WS_APIKEY: ${{secrets.APIKEY}}
         WS_USERKEY: ${{secrets.USERKEY}}
       run: |
-        cat <<EOF > eua.config
+        cat <<EOF > maven-eua.config
         apiKey=$WS_APIKEY
         userKey=$WS_USERKEY
         wss.url=https://saas.whitesourcesoftware.com/agent
         productName=GH_${{ github.event.repository.name }}
-        projectName=${{ github.ref }}_Prioritize
+        projectName=${{ github.ref }}_Maven_Prioritize
         enableImpactAnalysis=true
         requireKnownSha1=false
         resolveAllDependencies=false
         maven.resolveDependencies=true
         maven.aggregateModules=true
+        fileSystemScan=false
+        generateProjectDetailsJson=true
+        EOF
+        cat maven-eua.config
+        echo maven-config created successfully
+        cat <<EOF > npm-eua.config
+        apiKey=$WS_APIKEY
+        userKey=$WS_USERKEY
+        wss.url=https://saas.whitesourcesoftware.com/agent
+        productName=GH_${{ github.event.repository.name }}
+        projectName=${{ github.ref }}_NPM_Prioritize
+        enableImpactAnalysis=true
+        requireKnownSha1=false
+        resolveAllDependencies=false
         npm.resolveDependencies=true
         npm.resolveLockFile=false
         fileSystemScan=false
         generateProjectDetailsJson=true
         EOF
-        cat eua.config
-        echo config created successfully
+        cat npm-eua.config
+        echo npm-config created successfully
         curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
         curl -LJO https://unified-agent.s3.amazonaws.com/xModuleAnalyzer/xModuleAnalyzer.jar
         echo Unified Agent downloaded successfully
         java -jar wss-unified-agent.jar -d ./ -analyzeMultiModuleExclusions '**/*internal* **/*original' -analyzeMultiModule multimodule.txt
         echo 'multimodule.txt contents'
         cat multimodule.txt
-        java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -c ./eua.config -aggregateModules true
+        java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -c ./maven-eua.config -aggregateModules true
+        echo 'maven eua scan complete'
+        java -jar xModuleAnalyzer.jar -xModulePath multimodule.txt -fsaJarPath ./wss-unified-agent.jar -c ./npm-eua.config -aggregateModules true
+        echo 'npm eua scan complete'
 
     - name: 'Upload Prioritize Logs'
       uses: actions/upload-artifact@v2
