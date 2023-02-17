@@ -9,6 +9,9 @@
     "vulnerableCheckRunConclusionLevel": "failure",
     "displayMode": "diff"
   },
+    "leastVulnerablePackageSettings": {                 
+    "enabled": true     
+  },
   "issueSettings": {
     "minSeverityLevel": "LOW"
   }
